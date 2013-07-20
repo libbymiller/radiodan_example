@@ -1,0 +1,34 @@
+#! /bin/sh
+# /etc/init.d/say_ip
+
+### BEGIN INIT INFO
+# Provides:          say_ip
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Simple script to start a program at boot
+# Description:       A simple script from www.stuffaboutcode.com which will start / stop a program a boot / shutdown.
+### END INIT INFO
+
+# If you want a command to always run, put it here
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+  start)
+    echo "Starting say_ip"
+    # run application you want to start
+    sudo /usr/bin/ruby /home/pi/radiodan_example/init.d/say_ip &
+    ;;
+  stop)
+    echo "Stopping say_ip"
+    # kill application you want to stop
+    sudo pkill -f say_ip
+    ;;
+  *)
+    echo "Usage: /etc/init.d/say_ip {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0
