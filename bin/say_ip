@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+require "system/getifaddrs"
+
+ROOT = File.join(File.dirname(__FILE__), '..')
+PATH  = File.join(ROOT, 'tmp')
+
+#eth0=>{:inet_addr=>"192.168.2.4"
+#wlan0=>{:inet_addr
+
+#2.times { |i|
+  eth0=nil
+  wlan = nil
+  ok_to_launch = false
+
+
+  begin
+    eth0 = System.get_ifaddrs[:eth0][:inet_addr]
+  rescue
+  end
+
+  begin
+    wlan = System.get_ifaddrs[:wlan0][:inet_addr]
+  rescue
+  end
+
+  if(wlan || eth0)
+    ok_to_launch = true
+  end
+
+  if(wlan)
+    begin
+      echo `espeak -v en "eye pee is #{wlan}"`
+    rescue
+      puts "error wlan"
+    end
+  else
+    if(eth0)
+      begin
+        echo `espeak -v en "eye pee is #{eth0}"`
+      rescue
+        puts "error ethernet"
+      end
+    else
+      begin
+        echo `espeak -v en "No eye pee port"` 
+      rescue
+        puts "barf"
+      end
+    end
+  end
+#}
+
+#  if(ok_to_launch)
+#    puts "starting radiodan"
+#    `cd /home/pi/radiodan_example/; ./bin/start`
+#  end
