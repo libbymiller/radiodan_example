@@ -1,4 +1,10 @@
+
+
 to add:
+
+sudo cp init.d/say_ip /etc/init.d/
+sudo cp init.d/radiodan /etc/init.d/
+
 sudo update-rc.d say_ip defaults
 sudo update-rc.d radiodan defaults
 to test:
