@@ -13,3 +13,4 @@ group :web do
   gem 'rest-client'
 end
 
+gem 'system-getifaddrs'
