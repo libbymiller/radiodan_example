@@ -18,7 +18,7 @@ case "$1" in
   start)
     echo "Starting say_ip"
     # run application you want to start
-    sudo /usr/bin/ruby /home/pi/radiodan_example/init.d/say_ip &
+    sudo /usr/bin/ruby /home/pi/radiodan_example/bin/say_ip &
     ;;
   stop)
     echo "Stopping say_ip"
