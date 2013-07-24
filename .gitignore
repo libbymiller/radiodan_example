@@ -8,3 +8,4 @@ vendor/*
 log.txt
 stations.txt
 to_play.txt
+.bundle
