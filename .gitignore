@@ -3,3 +3,8 @@ tmp/*
 .vagrant
 db/*.sqlite3
 .DS_Store
+config/config.yml
+vendor/*
+log.txt
+stations.txt
+to_play.txt

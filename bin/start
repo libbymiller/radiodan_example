@@ -7,28 +7,59 @@ require 'thin'
 
 $:<< './lib'
 require 'download_bbc_radio'
+require 'download_top_radio'
 require 'web_server'
+require 'local_config'
+
+config = LocalConfig.new
 
 root = File.join(File.dirname(__FILE__), '..')
 
-@bbc_stations = DownloadBBCRadio.new
-@bbc_stations.run
+@bbc_stations = DownloadTopRadio.new(config.top_channels.url)
+stations_list = @bbc_stations.run
 
-radio1 = @bbc_stations.stations['bbc_radio_1']
-radio4 = @bbc_stations.stations['bbc_radio_4']
+downloaded = DownloadBBCRadio.new
+stations_hash = downloaded.run
+
+url = stations_hash[stations_list[0]]
+radio = Radiodan::Playlist.new tracks: url
+
+url1 = stations_hash[stations_list[1]]
+radio1 = Radiodan::Playlist.new tracks: url1
+
+str = ""
+stations_list.each do |station|
+  str << station
+  str << "\t"
+  str << stations_hash[station]
+  str << "\n"
+end
+
+File.open("#{root}/stations.txt", 'w') {|f| f.write(str) }
+
+to_play = "#{stations_list[1]}\t#{stations_hash[stations_list[1]]}"
+File.open("#{root}/to_play.txt", 'w') {|f| f.write(to_play) }
+
 
 EM.synchrony do
-  radios = Radiodan::Playlist.new(tracks: (radio1.tracks + radio4.tracks))
+  radios = Radiodan::Playlist.new(tracks: (radio.tracks))
 
   radio = Radiodan.new do |builder|
     builder.log      STDOUT
     builder.adapter  :MPD, :host => 'localhost', :port => 6600
-    builder.playlist radio4
+    builder.playlist radio
     builder.use      :touch_file, :dir => File.join(root, 'tmp')
-    builder.use      :panic, :duration => 5, :playlist => radio1
+    builder.use      :change_channel, :filename => "#{root}/to_play.txt"
+#    builder.use      :panic, :filename => "#{root}/to_play.txt"
+#    builder.use      :foo, :filename => "#{root}/to_play.txt"
+
+
+
+#    builder.use      :panic, :duration => 5, :playlist => radio1
   end
 
   radio.start
 
   Thin::Server.start WebServer.new(radio.player), '0.0.0.0', 3000, :signals => false
 end
+

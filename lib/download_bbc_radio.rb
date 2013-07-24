@@ -32,8 +32,9 @@ class DownloadBBCRadio
 
         station_name = "bbc_radio_#{station}"
 
-        content = Radiodan::Playlist.new tracks: url
-        @stations[station_name] = content
+#        content = Radiodan::Playlist.new tracks: url
+#        @stations[station_name] = content
+        @stations[station_name] = url
       end
     end
 

@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+require 'radiodan'
+
+$:<< './lib'
+require 'download_top_radio'
+require 'download_bbc_radio'
+require 'local_config'
+require "radiodan/playlist"
+
+config = LocalConfig.new
+puts "[1]"
+root = File.join(File.dirname(__FILE__), '..')
+puts "[2]"
+
+@bbc_stations = DownloadTopRadio.new(config.top_channels.url)
+puts "[3]"
+stations_list = @bbc_stations.run
+puts "[4]"
+
+downloaded = DownloadBBCRadio.new
+puts "[5]"
+stations_hash = downloaded.run
+puts "[6]"
+
+last_tracks_str = File.read("#{root}/stations.txt")
+puts "[7]"
+        
+contents = last_tracks_str.chomp
+puts "[8]"
+arr = contents.split("\n")
+puts "[9]"
+arr2 = arr[0].split("\t")
+puts "[10]"
+
+was_playing_str = File.read("#{root}/to_play.txt")
+
+# new top, so touch the change channel file
+if(arr2[0] != stations_list[0])
+  puts "[11]"
+  File.open("#{root}/tmp/change_channel", 'w') {|f| f.write(Time.now.to_s) }   
+  puts "found a new station from #{arr2[0]} to #{stations_list[0]}"
+else
+  puts "no change"
+  puts "[12]"
+end
+
+# save the new stuff in any case
+puts "[13]"
+
+str = ""
+stations_list.each do |station|
+  str << station
+  str << "\t"
+  str << stations_hash[station]
+  str << "\n"
+end
+puts "[14]"
+
+File.open("#{root}/stations.txt", 'w') {|f| f.write(str) }
+puts "[15]"
+
+to_play = "#{stations_list[1]}\t#{stations_hash[stations_list[1]]}"
+puts "[16]"
+
+File.open("#{root}/to_play.txt", 'w') {|f| f.write(to_play) }
+puts "[17]"
+

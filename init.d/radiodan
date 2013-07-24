@@ -11,6 +11,8 @@
 # Description:       A simple script from www.stuffaboutcode.com which will start / stop a program a boot / shutdown.
 ### END INIT INFO
 
+#USERNAME=pi
+
 # If you want a command to always run, put it here
 
 # Carry out specific functions when asked to by the system

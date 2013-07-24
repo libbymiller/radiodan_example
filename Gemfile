@@ -4,7 +4,7 @@ group :development do
   gem 'pry'
 end
 
-gem 'radiodan', :git => 'https://github.com/pixelblend/radiodan.git'
+gem 'radiodan', :git => 'https://github.com/libbymiller/radiodan.git'
 
 group :web do
   gem 'thin'
@@ -14,3 +14,5 @@ group :web do
 end
 
 gem 'system-getifaddrs'
+gem 'settingslogic'
+

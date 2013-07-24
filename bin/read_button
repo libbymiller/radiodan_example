@@ -40,9 +40,33 @@ while (true)
       puts button.value
       last_val = button.value
       if(button.value==0)
-           puts "PANIC!"
-           filename = File.join(PATH, "panic")
+           puts "CHANGING CHANNEL!"
+           filename = File.join(PATH, "change_channel")
            File.open(filename, 'w') { |file| file.write(Time.now) }
+
+           last_tracks_str = File.read("#{ROOT}/stations.txt")
+           was_playing_str = File.read("#{ROOT}/to_play.txt")
+           station = was_playing_str.split("\t")[0]
+
+           contents = last_tracks_str.chomp
+           arr = contents.split("\n")
+           count = 0
+           arr.each do |a|
+             arr2 = a.split("\t")
+             if(arr2[0]==station) #take the next one
+               next_station = arr[count+1]
+               if(next_station && next_station != "")
+                  puts "found new station #{next_station}"
+                  File.open("#{ROOT}/to_play.txt", 'w') {|f| f.write(next_station) }
+               else
+                  next_station = arr[0]
+                  puts "starting list of stations again #{next_station}"
+                  File.open("#{ROOT}/to_play.txt", 'w') {|f| f.write(next_station) }
+               end
+             end
+             count = count + 1
+           end
+
       end
     end
 end

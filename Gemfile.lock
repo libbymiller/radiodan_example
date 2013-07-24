@@ -1,6 +1,6 @@
 GIT
-  remote: https://github.com/pixelblend/radiodan.git
-  revision: 82b1408a1e1c77d7dea9315685aa19bdd0edbb04
+  remote: https://github.com/libbymiller/radiodan.git
+  revision: 9476c069721bacd7038b11f512127bff96d5da89
   specs:
     radiodan (0.0.4)
       active_support (~> 3.0.0)
@@ -49,6 +49,7 @@ GEM
       rack
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    settingslogic (2.0.9)
     sinatra (1.4.3)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -69,6 +70,7 @@ DEPENDENCIES
   pry
   radiodan!
   rest-client
+  settingslogic
   sinatra (~> 1.4.2)
   system-getifaddrs
   thin
