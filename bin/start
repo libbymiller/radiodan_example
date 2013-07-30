@@ -4,6 +4,8 @@ require 'bundler/setup'
 require 'radiodan'
 require 'sinatra/async'
 require 'thin'
+require 'faye'
+require 'json'
 
 $:<< './lib'
 require 'download_bbc_radio'
@@ -12,6 +14,7 @@ require 'web_server'
 require 'local_config'
 
 config = LocalConfig.new
+
 
 root = File.join(File.dirname(__FILE__), '..')
 
@@ -29,6 +32,7 @@ radio1 = Radiodan::Playlist.new tracks: url1
 
 str = ""
 stations_list.each do |station|
+  puts station
   str << station
   str << "\t"
   str << stations_hash[station]
@@ -41,6 +45,10 @@ to_play = "#{stations_list[1]}\t#{stations_hash[stations_list[1]]}"
 File.open("#{root}/to_play.txt", 'w') {|f| f.write(to_play) }
 
 
+#bayeux = Faye::RackAdapter.new(:mount => '/faye', :timeout => 25)
+#bayeux.listen(8000)
+
+
 EM.synchrony do
   radios = Radiodan::Playlist.new(tracks: (radio.tracks))
 
@@ -50,15 +58,23 @@ EM.synchrony do
     builder.playlist radio
     builder.use      :touch_file, :dir => File.join(root, 'tmp')
     builder.use      :change_channel, :filename => "#{root}/to_play.txt"
-#    builder.use      :panic, :filename => "#{root}/to_play.txt"
-#    builder.use      :foo, :filename => "#{root}/to_play.txt"
-
-
-
-#    builder.use      :panic, :duration => 5, :playlist => radio1
   end
 
+  Faye::WebSocket.load_adapter('thin')
+  client = Faye::Client.new("http://localhost:3000/faye")
+  require 'pp'
   radio.start
+  radio.player.register_event :change_channel do 
+    puts "channel changed!!!!!!"
+    state = radio.player.state
+    puts "-------------------"
+    puts radio.player.playlist.state
+    pp radio.player.playlist.tracks[0].attributes
+    puts radio.player.playlist.volume
+    puts "-------------------"
+    client.publish("/foo", "....")
+  end
+  
 
   Thin::Server.start WebServer.new(radio.player), '0.0.0.0', 3000, :signals => false
 end

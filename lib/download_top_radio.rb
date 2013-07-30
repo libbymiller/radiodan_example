@@ -27,7 +27,7 @@ class DownloadTopRadio
     stations_hash = {}
 
     RestClient.proxy = ENV['HTTP_PROXY']
-
+    puts "URL #{@url}"
     req = RestClient.get(@url)
     s = JSON.parse(req.to_s)
     stats =  s["stations"]
@@ -46,7 +46,20 @@ class DownloadTopRadio
        end
     end
     @stations = @stations.reverse
+    if(@stations.length==0)
 
+       @stations  = [
+"bbc_radio_1",
+"bbc_radio_2",
+"bbc_radio_6",
+"bbc_radio_4",
+"bbc_radio_5l",
+"bbc_radio_1x",
+"bbc_radio_3",
+"bbc_radio_4x",
+"bbc_radio_5lsp",
+"bbc_radio_4lw"]
+    end
     @stations
   end
 end
