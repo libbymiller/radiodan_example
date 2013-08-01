@@ -4,16 +4,16 @@ group :development do
   gem 'pry'
 end
 
-gem 'radiodan', :git => 'https://github.com/libbymiller/radiodan.git'
+gem 'radiodan', :git => 'https://github.com/pixelblend/radiodan.git'
 
 group :web do
   gem 'thin'
   gem 'sinatra', '~> 1.4.2'
   gem 'async_sinatra', '~> 1.1.0'
   gem 'rest-client'
-  gem 'faye',     '~> 0.8.9'
+  gem 'faye'
+  gem 'eventmachine'
+  gem 'json'
 end
 
-gem 'system-getifaddrs'
 gem 'settingslogic'
-

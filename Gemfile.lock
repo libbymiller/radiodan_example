@@ -1,6 +1,6 @@
 GIT
-  remote: https://github.com/libbymiller/radiodan.git
-  revision: 9476c069721bacd7038b11f512127bff96d5da89
+  remote: https://github.com/pixelblend/radiodan.git
+  revision: 82b1408a1e1c77d7dea9315685aa19bdd0edbb04
   specs:
     radiodan (0.0.4)
       active_support (~> 3.0.0)
@@ -29,7 +29,7 @@ GEM
       em-socksify
       eventmachine (>= 1.0.0.beta.4)
       http_parser.rb (>= 0.5.3)
-    em-simple_telnet (0.0.9)
+    em-simple_telnet (0.0.13)
       eventmachine (>= 1.0.0)
     em-socksify (0.3.0)
       eventmachine (>= 1.0.0.beta.4)
@@ -48,7 +48,8 @@ GEM
       websocket-driver (>= 0.2.0)
     http_parser.rb (0.5.3)
     i18n (0.6.4)
-    method_source (0.8.1)
+    json (1.8.0)
+    method_source (0.8.2)
     mime-types (1.23)
     pry (0.9.12.2)
       coderay (~> 1.0.5)
@@ -64,8 +65,7 @@ GEM
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
-    slop (3.4.5)
-    system-getifaddrs (0.2.0)
+    slop (3.4.6)
     thin (1.5.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
@@ -79,11 +79,12 @@ PLATFORMS
 
 DEPENDENCIES
   async_sinatra (~> 1.1.0)
-  faye (~> 0.8.9)
+  eventmachine
+  faye
+  json
   pry
   radiodan!
   rest-client
   settingslogic
   sinatra (~> 1.4.2)
-  system-getifaddrs
   thin

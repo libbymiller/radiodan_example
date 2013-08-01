@@ -10,6 +10,7 @@ require 'json'
 $:<< './lib'
 require 'download_bbc_radio'
 require 'download_top_radio'
+require 'change_channel'
 require 'web_server'
 require 'local_config'
 
@@ -62,20 +63,17 @@ EM.synchrony do
 
   Faye::WebSocket.load_adapter('thin')
   client = Faye::Client.new("http://localhost:3000/faye")
-  require 'pp'
   radio.start
-  radio.player.register_event :change_channel do 
+=begin
+  radio.player.register_event :channel_changed do 
     puts "channel changed!!!!!!"
     state = radio.player.state
-    puts "-------------------"
-    puts radio.player.playlist.state
-    pp radio.player.playlist.tracks[0].attributes
-    puts radio.player.playlist.volume
-    puts "-------------------"
-    client.publish("/foo", "....")
+    volume = radio.player.playlist.volume
+    name = radio.player.playlist.tracks[0]["Name"]
+    client.publish("/foo", "Channel Changed to #{state}, #{volume}, #{name}")
   end
   
-
+=end
   Thin::Server.start WebServer.new(radio.player), '0.0.0.0', 3000, :signals => false
 end
 

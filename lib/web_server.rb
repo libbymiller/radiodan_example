@@ -12,6 +12,16 @@ class WebServer < Sinatra::Base
 
   def initialize(player)
     @player = player
+    Faye::WebSocket.load_adapter('thin')
+    client = Faye::Client.new("http://localhost:3000/faye")
+    @player.register_event :channel_changed do
+      puts "channel changed!!!!!!"
+      state = @player.state
+      volume = @player.playlist.volume
+      name = @player.playlist.tracks[0]["Name"]
+      client.publish("/foo", "Channel Changed to #{state}, #{volume}, #{name}")
+    end
+
     super()
   end
 
