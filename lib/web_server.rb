@@ -19,6 +19,7 @@ class WebServer < Sinatra::Base
       state = @player.state
       volume = @player.playlist.volume
       name = @player.playlist.tracks[0]["Name"]
+      puts "Channel Changed to #{state}, #{volume}, #{name}"
       client.publish("/foo", "Channel Changed to #{state}, #{volume}, #{name}")
     end
 

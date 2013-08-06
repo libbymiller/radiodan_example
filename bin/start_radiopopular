@@ -24,12 +24,13 @@ stations_list = @bbc_stations.run
 
 downloaded = DownloadBBCRadio.new
 stations_hash = downloaded.run
+vol = 70
 
 url = stations_hash[stations_list[0]]
-radio = Radiodan::Playlist.new tracks: url
+radio = Radiodan::Playlist.new(tracks: url, volume: vol)
 
 url1 = stations_hash[stations_list[1]]
-radio1 = Radiodan::Playlist.new tracks: url1
+radio1 = Radiodan::Playlist.new(tracks: url1, volume: vol)
 
 str = ""
 stations_list.each do |station|
@@ -51,7 +52,6 @@ File.open("#{root}/to_play.txt", 'w') {|f| f.write(to_play) }
 
 
 EM.synchrony do
-  radios = Radiodan::Playlist.new(tracks: (radio.tracks))
 
   radio = Radiodan.new do |builder|
     builder.log      STDOUT
@@ -61,19 +61,8 @@ EM.synchrony do
     builder.use      :change_channel, :filename => "#{root}/to_play.txt"
   end
 
-  Faye::WebSocket.load_adapter('thin')
-  client = Faye::Client.new("http://localhost:3000/faye")
   radio.start
-=begin
-  radio.player.register_event :channel_changed do 
-    puts "channel changed!!!!!!"
-    state = radio.player.state
-    volume = radio.player.playlist.volume
-    name = radio.player.playlist.tracks[0]["Name"]
-    client.publish("/foo", "Channel Changed to #{state}, #{volume}, #{name}")
-  end
   
-=end
   Thin::Server.start WebServer.new(radio.player), '0.0.0.0', 3000, :signals => false
 end
 
