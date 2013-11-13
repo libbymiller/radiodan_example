@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+require 'pp'
+require 'rest-client'
+require 'radiodan'
+require 'frankenpins'
+
+$:<< './lib'
+require 'local_config'
+
+encoder = Frankenpins::RotaryEncoder.new(:pin_a => 4, :pin_b => 5)
+button_one = Frankenpins::Button.new(:pin => 0, :pull => :up)
+button_two = Frankenpins::Button.new(:pin => 6, :pull => :up)
+
+config = LocalConfig.new
+        
+url = config.url_local.url
+
+last_direction = nil
+second_last_direction = nil
+
+encoder.on :changed do |pos, direction|
+  puts "position: #{pos}, direction: #{direction}"
+  pp direction
+  if(direction == :clockwise && last_direction == :clockwise && second_last_direction == :clockwise)
+    begin
+      req = RestClient.get("#{url}higher_volume")
+    rescue Exception=>e
+      puts "rotary encoder problem (higher volume)"
+      puts e
+    end
+  else
+    if(direction == :anticlockwise && last_direction == :anticlockwise && second_last_direction == :anticlockwise)
+      begin
+        req = RestClient.get("#{url}lower_volume")
+      rescue Exception=>e
+        puts "rotary encoder problem (lower volume)"
+        puts e
+      end
+    end
+  end
+  last_direction = direction
+  second_last_direction = last_direction
+end
+
+button_one.on :pressed do
+      puts "Button one pressed: next"
+      begin
+        req = RestClient.get("#{url}next")
+      rescue Exception=>e
+        puts "Button problem (next)"
+        puts e
+      end
+      sleep 1
+end
+
+button_two.on :pressed do
+      puts "Button two pressed: prev"
+      begin
+        req = RestClient.get("#{url}prev")
+      rescue Exception=>e
+        puts "Button problem (prev)"
+        puts e
+      end
+      sleep 1
+end
+
+puts "Frankenpins started ok"
+Frankenpins.wait

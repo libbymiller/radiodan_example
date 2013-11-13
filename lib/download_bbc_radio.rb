@@ -15,13 +15,25 @@ require "rest-client"
 class DownloadBBCRadio
   URL = "http://www.bbc.co.uk/radio/listen/live/r%s_aaclca.pls"
   STATIONS = %w{1 1x 2 3 4 4lw 4x 5l 5lsp 6}
-  attr_accessor :stations
+  METADATA = ["Radio one", "Radio One Extra", "Radio Two", "Radio Three", "Radio Four F M ", "Radio Four Long Wave", "Radio Four Extra", "Radio Five Live", "Radio Five Live Sports Extra", "Radio Six Music"]
+  attr_accessor :stations, :titles
+
 
   def run
     @stations ||= Hash.new
+    @titles ||= Hash.new
     @threads = []
     
     RestClient.proxy = ENV['HTTP_PROXY']
+
+# gather titlles while no threading
+    count = 0
+    STATIONS.each do |station|
+        station_name = "bbc_radio_#{station}"
+        puts "metadata #{METADATA[count]}"
+        @titles[station_name] = METADATA[count]
+        count = count+1
+    end
 
     STATIONS.each do |station|
       @threads << Thread.new do 

@@ -23,4 +23,25 @@ class WebApp < Radiodan::Sinatra
     player.trigger_event :panic
     "Panic!"
   end
+
+  get '/next' do
+    player.trigger_event :next_channel
+    "Next!"
+  end
+
+  get '/prev' do
+    player.trigger_event :prev_channel
+    "Prev!"
+  end
+
+  get '/lower_volume' do
+    player.trigger_event :lower_volume
+    "Lowering Volume!"
+  end
+
+  get '/higher_volume' do
+    player.trigger_event :higher_volume
+    "Increasing Volume!"
+  end
+
 end
