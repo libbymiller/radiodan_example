@@ -69,7 +69,14 @@ class MqttPanic
         file_change_time = nil
          timer = EM::Synchrony.add_periodic_timer(1) do
            file = station_id
-           f = File.new(File.join(@path, file))
+           filename = File.join(@path, file)
+           if(File.exists?(filename))
+puts "!!!!!!!! #{filename} ok"
+           else
+puts "!!!!!!!! #{filename} NOT ok"
+              File.open(filename, 'w') {|f| f.write(Time.now) }
+           end
+           f = File.new(filename)
            logger.debug "file change time is #{f.ctime}"
            if(!file_change_time)
               file_change_time = f.ctime
