@@ -24,7 +24,7 @@ vol = 100
 tracks = nil
 
 keys_sorted.each do |key|
-  file = "#{key}.wav"
+  file = "ident_#{key}.wav"
   ident = Radiodan::Playlist.new tracks: file
   if(tracks)
     tracks = tracks + ident.tracks + @bbc_stations.stations[key].tracks
