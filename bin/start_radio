@@ -10,7 +10,7 @@ require 'next_channel'
 require 'prev_channel'
 require 'lower_volume'
 require 'higher_volume'
-require 'mqqt_panic'
+require 'mqtt_panic'
 
 root = File.join(File.dirname(__FILE__), '..')
 
@@ -44,7 +44,7 @@ radio = Radiodan.new do |builder|
   builder.use      :higher_volume, :volume => vol
   builder.use      :next_channel, :stations => @bbc_stations.stations, :titles => @bbc_stations.titles, :stations_keys_sorted => keys_sorted, :start_station => start_station
   builder.use      :prev_channel, :stations => @bbc_stations.stations, :titles => @bbc_stations.titles, :stations_keys_sorted => keys_sorted, :start_station => start_station
-  builder.use      :mqqt_panic, :path => File.join(root, 'mqqt_data')
+  builder.use      :mqtt_panic, :path => File.join(root, 'mqtt_data')
 
   builder.playlist radio_start
 end

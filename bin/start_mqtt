@@ -19,9 +19,9 @@ MQTT::Client.connect('test.mosquitto.org') do |c|
 
     last_message_array = messages[short_topic]
     last_nowplaying = nowplaying[short_topic]
-    filename = "mqqt_data/#{short_topic}"
-    nowplaying_filename = "mqqt_data/#{short_topic}_nowplaying"
-    programme_filename = "mqqt_data/#{short_topic}_programme"
+    filename = "mqtt_data/#{short_topic}"
+    nowplaying_filename = "mqtt_data/#{short_topic}_nowplaying"
+    programme_filename = "mqtt_data/#{short_topic}_programme"
 
     puts "===message: #{topic} #{message}"
 
