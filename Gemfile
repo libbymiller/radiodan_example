@@ -17,3 +17,4 @@ gem 'frankenpins'
 
 gem 'settingslogic'
 
+gem 'mqtt'

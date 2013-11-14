@@ -1,0 +1,98 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+require 'mqtt'
+require 'pp'
+
+
+messages = {}
+nowplaying = {}
+nowp_counter = {}
+
+# assume only two for each network before a change
+
+MQTT::Client.connect('test.mosquitto.org') do |c|
+  # If you pass a block to the get method, then it will loop
+  c.get('bbc/livetext/#') do |topic,message|
+    short_topic = topic.gsub(/.*\//,"")
+
+    last_message_array = messages[short_topic]
+    last_nowplaying = nowplaying[short_topic]
+    filename = "mqqt_data/#{short_topic}"
+    nowplaying_filename = "mqqt_data/#{short_topic}_nowplaying"
+    programme_filename = "mqqt_data/#{short_topic}_programme"
+
+    puts "===message: #{topic} #{message}"
+
+    # ensure each station has an array for playing and a nowplaying
+
+    if(last_message_array == nil)
+       last_message_array = []
+       messages[short_topic] = last_message_array
+    end
+    if(!nowp_counter[short_topic])
+      nowp_counter[short_topic] = 0
+    end
+
+# deal with now playing messages separately
+
+    if(message.downcase.include?("now playing"))
+      nowp_counter[short_topic] = 0 #reset counter
+      if (!last_nowplaying || last_nowplaying != message)
+        last_nowplaying = message
+        nowplaying[short_topic] = last_nowplaying
+        puts "got new now playing - writing to file"
+        File.open(filename, 'w') {|f| f.write("#{Time.now}") }
+        File.open(nowplaying_filename, 'w') {|f| f.write("#{message}") }
+      end
+    else
+      nowp_counter[short_topic] = nowp_counter[short_topic]+1
+
+# if we've previously had a now playing and then not had one for ages...
+# assume tha the song has finished and now chatting
+      if(nowplaying[short_topic] && nowp_counter[short_topic] > 10)
+        File.open(filename, 'w') {|f| f.write("#{Time.now}") }
+        File.open(nowplaying_filename, 'w') {|f| f.write("none") }
+      end
+
+
+# first time - to get the prog info
+      arr = messages[short_topic]
+      if(arr.length == 3)
+            pp arr
+            File.open(filename, 'w') {|f| f.write("#{Time.now}") }
+            arr.uniq!
+            pp arr
+            arr = arr.sort { |a,b| a.length <=> b.length }
+            File.open(programme_filename, 'w') {|f| f.write("#{arr.join(": ")}") }
+      end
+
+      puts "comparing #{message}"
+      puts "with"
+      pp messages[short_topic]
+
+      if(!messages[short_topic].include?(message))
+         puts "**we've not got the message*** #{messages[short_topic].length}"
+         if(messages[short_topic].length > 7) # we've seen two or three of each plus a spare
+            puts "think something has changed - writing to file"
+            pp messages[short_topic]
+            File.open(filename, 'w') {|f| f.write("#{Time.now}") }
+            arr = messages[short_topic].uniq!
+            arr = arr.sort_by {|x| x.length}
+            File.open(programme_filename, 'w') {|f| f.write("#{arr.join(": ")}") }
+         end
+      else
+        puts "messages includes message"
+      end
+
+# deal with other messages
+      messages[short_topic].push(message)
+      if(messages[short_topic].length > 10)
+         messages[short_topic].shift
+      end
+      pp messages
+
+    end
+  end
+end
+
