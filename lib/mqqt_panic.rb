@@ -36,8 +36,12 @@ class MqqtPanic
 
         file = "totd_20130924-0600a.mp3"
         mp3 = Radiodan::Playlist.new tracks: file
+        mp31 = Radiodan::Playlist.new tracks: "totd_20131031-0600a.mp3"
+        mp32 = Radiodan::Playlist.new tracks: "totd_20130618-0600a.mp3"
+        mp33 = Radiodan::Playlist.new tracks: "totd_20130610-0600a.mp3"
+        all_tracks = mp3.tracks + mp31.tracks + mp32.tracks + mp33.tracks
         begin
-          @player.playlist = Radiodan::Playlist.new(tracks: mp3.tracks, volume: @player.playlist.volume, position: @player.playlist.position)
+          @player.playlist = Radiodan::Playlist.new(tracks: all_tracks, volume: @player.playlist.volume)
         rescue Exception=>e
           puts "barf"
           puts e

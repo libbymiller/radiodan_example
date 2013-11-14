@@ -12,6 +12,7 @@ require 'local_config'
 encoder = Frankenpins::RotaryEncoder.new(:pin_a => 4, :pin_b => 5)
 button_one = Frankenpins::Button.new(:pin => 0, :pull => :up)
 button_two = Frankenpins::Button.new(:pin => 6, :pull => :up)
+button_panic = Frankenpins::Button.new(:pin => 3, :pull => :up)
 
 config = LocalConfig.new
         
@@ -61,6 +62,17 @@ button_two.on :pressed do
         req = RestClient.get("#{url}prev")
       rescue Exception=>e
         puts "Button problem (prev)"
+        puts e
+      end
+      sleep 1
+end
+
+button_panic.on :pressed do
+      puts "Button panic pressed: panic"
+      begin
+        req = RestClient.get("#{url}panic")
+      rescue Exception=>e
+        puts "Button problem (panic)"
         puts e
       end
       sleep 1
