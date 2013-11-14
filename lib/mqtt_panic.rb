@@ -34,12 +34,30 @@ class MqttPanic
           station_id = "5livesportsextra"
         end
 
-        file = "totd_20130924-0600a.mp3"
-        mp3 = Radiodan::Playlist.new tracks: file
-        mp31 = Radiodan::Playlist.new tracks: "totd_20131031-0600a.mp3"
-        mp32 = Radiodan::Playlist.new tracks: "totd_20130618-0600a.mp3"
-        mp33 = Radiodan::Playlist.new tracks: "totd_20130610-0600a.mp3"
-        all_tracks = mp3.tracks + mp31.tracks + mp32.tracks + mp33.tracks
+# get everything from /music that isn't an ident
+# shouldn't be hardcoded
+        files = []
+
+        Dir.foreach("/music") {|x| 
+          if(!x.match("ident") && x!="." && x!="..")
+            files.push(x)
+          end
+        }
+
+        files = files.sample(20) # a random bunch
+
+        all_tracks = nil
+        files.each do |f|
+          if(!all_tracks)
+            all_tracks = (Radiodan::Playlist.new( tracks: f)).tracks
+          end
+          all_tracks = all_tracks + (Radiodan::Playlist.new( tracks: f)).tracks
+        end
+
+
+        #file = "totd_20130924-0600a.mp3"
+        #mp3 = Radiodan::Playlist.new tracks: file
+        #all_tracks = mp3.tracks + mp31.tracks + mp32.tracks + mp33.tracks
         begin
           @player.playlist = Radiodan::Playlist.new(tracks: all_tracks, volume: @player.playlist.volume)
         rescue Exception=>e

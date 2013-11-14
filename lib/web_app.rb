@@ -40,7 +40,7 @@ class WebApp < Radiodan::Sinatra
   end
 
   get '/panic' do
-    player.trigger_event :mqqt_panic
+    player.trigger_event :mqtt_panic
     "MQQT-based panic in progress"
   end
 
