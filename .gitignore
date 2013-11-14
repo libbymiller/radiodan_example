@@ -3,4 +3,3 @@ tmp/*
 .vagrant
 db/*.sqlite3
 .DS_Store
-mqqt_data/*
