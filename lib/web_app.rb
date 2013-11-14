@@ -19,11 +19,6 @@ class WebApp < Radiodan::Sinatra
     "<h1>Radiodan</h1><p>#{CGI.escapeHTML(player.state.inspect)}</p>"
   end
 
-  get '/panic' do
-    player.trigger_event :panic
-    "Panic!"
-  end
-
   get '/next' do
     player.trigger_event :next_channel
     "Next!"
@@ -42,6 +37,11 @@ class WebApp < Radiodan::Sinatra
   get '/higher_volume' do
     player.trigger_event :higher_volume
     "Increasing Volume!"
+  end
+
+  get '/panic' do
+    player.trigger_event :mqqt_panic
+    "MQQT-based panic in progress"
   end
 
 end
