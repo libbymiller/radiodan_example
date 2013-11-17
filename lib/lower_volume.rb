@@ -6,6 +6,7 @@ class LowerVolume
   include Radiodan::Logging
 
   def initialize(config)
+    @path = config[:path]
   end
 
   def call(player)
@@ -28,6 +29,11 @@ class LowerVolume
         volume = @player.playlist.volume
         lower_volume = volume.to_i - 10
         puts "vol was #{volume} - volume is now #{lower_volume}"
+
+# save volume
+        filename = @path
+        File.open(filename, 'w') {|f| f.write(lower_volume) }
+
         begin
           @player.playlist = Radiodan::Playlist.new(tracks: @player.playlist.tracks, volume: lower_volume, position: @player.playlist.position)
         rescue Exception=>e

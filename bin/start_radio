@@ -21,6 +21,26 @@ keys_sorted = @bbc_stations.stations.keys.sort
 
 start_station = 0
 vol = 100
+
+f = File.read("volume")
+puts f
+if(f.to_i <= 100 && f.to_i > 0)
+  vol = f.to_i
+  puts "got user volume #{vol}"
+end
+
+s = File.read("station")
+puts s
+pp keys_sorted
+
+if(s)
+  s = s.chomp.to_s
+  if(keys_sorted.include?(s))
+    start_station = (keys_sorted.index(s)*2)
+    puts "got user start station #{start_station}"
+  end
+end
+
 tracks = nil
 
 keys_sorted.each do |key|
@@ -31,19 +51,18 @@ keys_sorted.each do |key|
   else
     tracks = ident.tracks + @bbc_stations.stations[key].tracks
   end
-
 end
 
-radio_start = Radiodan::Playlist.new(tracks: tracks, volume: vol)
+radio_start = Radiodan::Playlist.new(tracks: tracks, volume: vol, position: start_station)
 
 radio = Radiodan.new do |builder|
   builder.log      STDOUT
   builder.adapter  :MPD, :host => 'localhost', :port => 6600
   builder.use      :web_server, WebApp, :port => 3000
-  builder.use      :lower_volume, :volume => vol
-  builder.use      :higher_volume, :volume => vol
-  builder.use      :next_channel, :stations => @bbc_stations.stations, :titles => @bbc_stations.titles, :stations_keys_sorted => keys_sorted, :start_station => start_station
-  builder.use      :prev_channel, :stations => @bbc_stations.stations, :titles => @bbc_stations.titles, :stations_keys_sorted => keys_sorted, :start_station => start_station
+  builder.use      :lower_volume, :volume => vol, :path => File.join(root, 'volume')
+  builder.use      :higher_volume, :volume => vol, :path => File.join(root, 'volume')
+  builder.use      :next_channel, :stations => @bbc_stations.stations, :titles => @bbc_stations.titles, :stations_keys_sorted => keys_sorted, :start_station => start_station, :path => File.join(root, 'station')
+  builder.use      :prev_channel, :stations => @bbc_stations.stations, :titles => @bbc_stations.titles, :stations_keys_sorted => keys_sorted, :start_station => start_station, :path => File.join(root, 'station')
   builder.use      :mqtt_panic, :path => File.join(root, 'mqtt_data')
 
   builder.playlist radio_start

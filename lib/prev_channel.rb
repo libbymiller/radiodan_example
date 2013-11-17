@@ -6,6 +6,7 @@ class PrevChannel
   include Radiodan::Logging
 
   def initialize(config)
+    @path = config[:path]
     @stations = config[:stations]
     @stations_keys_sorted = config[:stations_keys_sorted]
     @titles = config[:titles]
@@ -34,10 +35,14 @@ class PrevChannel
      prev_int = (index - 2 < 0) ? (@stations_keys_sorted.length * 2) - 2 : index - 2
 
      puts "prev_int #{prev_int}"
-     prev_station_id = @stations_keys_sorted[prev_int.to_i]
+     prev_station_id = @stations_keys_sorted[prev_int.to_i/2]
      prev_station = @stations[prev_station_id]
      puts "prev channel #{prev_int} #{@stations_keys_sorted.length}  #{prev_station_id}"
      title = @titles[prev_station_id]
+
+# save station
+     filename = @path
+     File.open(filename, 'w') {|f| f.write(prev_station_id) }
 
      begin
        @player.playlist = Radiodan::Playlist.new(tracks: @player.playlist.tracks, volume: @player.playlist.volume, position: prev_int)

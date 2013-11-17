@@ -4,3 +4,5 @@ tmp/*
 db/*.sqlite3
 .DS_Store
 mqtt_data/*
+volume
+station

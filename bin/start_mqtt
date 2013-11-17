@@ -72,7 +72,7 @@ MQTT::Client.connect('test.mosquitto.org') do |c|
       puts "with"
       pp messages[short_topic]
 
-      if(!messages[short_topic].include?(message) && (!message.downcase.incude?("coming next")))
+      if(!messages[short_topic].include?(message) && (!message.downcase.include?("coming next")))
          puts "**we've not got the message*** #{messages[short_topic].length}"
          if(messages[short_topic].length > 7) # we've seen two or three of each plus a spare
             puts "think something has changed - writing to file"
