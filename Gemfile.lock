@@ -71,7 +71,7 @@ GEM
       eventmachine (~> 1.0.0)
       rack-fiber_pool (~> 0.9)
       sinatra (~> 1.0)
-    slop (3.4.6)
+    slop (3.4.7)
     thin (1.5.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)

@@ -14,33 +14,33 @@ class NextChannel
   def call(player)
     @player = player
 
-    @player.register_event :play_state do |state|
-      if(state == :stop)
-        puts "state is stop"
-      else
-        puts "state is not stop"
-      end
-    end
     @player.register_event :next_channel do
       next_channel!
     end
   end
 
   def next_channel!
-     index = @player.playlist.position
+     index = @player.adapter.playlist.position
      puts "index is #{index}"
-     next_int = (index + 2 > (@stations_keys_sorted.length * 2) - 2) ? 0 : index + 2
-     puts "next_int #{next_int}"
-     next_station_id = @stations_keys_sorted[next_int.to_i/2]
+     if(index + 1 >= @stations_keys_sorted.length * 2)
+       next_int = 0
+     end
+     puts "index was #{index} next_int #{next_int}"
+
+     next_station_id = @stations_keys_sorted[index.to_i - 1/2]
      next_station = @stations[next_station_id]
-     puts "next channel #{next_int} #{@stations_keys_sorted.length}  #{next_station_id}"
+     puts "next: #{next_station}"
 
 # save station
      filename = @path                   
      File.open(filename, 'w') {|f| f.write(next_station_id) }
 
      begin
-       @player.playlist = Radiodan::Playlist.new(tracks: @player.playlist.tracks, volume: @player.playlist.volume, position: next_int)
+       if(next_int == 0)
+          @player.play(0)
+       else
+         @player.next
+       end
      rescue Exception=>e
        puts "barf"
        puts e

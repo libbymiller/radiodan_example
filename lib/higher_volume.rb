@@ -12,13 +12,6 @@ class HigherVolume
   def call(player)
     @player = player
 
-    @player.register_event :play_state do |state|
-      if(state == :stop)
-        puts "state is stop"
-      else
-        puts "state is not stop"
-      end
-    end
     @player.register_event :higher_volume do
       higher_volume!
     end
@@ -34,7 +27,7 @@ class HigherVolume
         File.open(filename, 'w') {|f| f.write(higher_volume) }
 
         begin
-          @player.playlist = Radiodan::Playlist.new(tracks: @player.playlist.tracks, volume: higher_volume, position: @player.playlist.position)
+          @player.playlist.volume = higher_volume
         rescue Exception=>e
           puts "barf"
           puts e

@@ -15,13 +15,6 @@ class PrevChannel
   def call(player)
     @player = player
 
-    @player.register_event :play_state do |state|
-      if(state == :stop)
-        puts "state is stop"
-      else
-        puts "state is not stop"
-      end
-    end
     @player.register_event :prev_channel do
       prev_channel!
     end
@@ -30,9 +23,11 @@ class PrevChannel
 
   def prev_channel!
 
-     index = @player.playlist.position
-     puts "index is #{index}"
-     prev_int = (index - 2 < 0) ? (@stations_keys_sorted.length * 2) - 2 : index - 2
+     index = @player.adapter.playlist.position
+     puts "index is #{index} adapter is #{@player.adapter.playlist.position}"
+
+     # complexity here is the idents, which are so short they don't count but we want to hear them
+     prev_int = (index - 2 < 0) ? (@stations_keys_sorted.length * 2) - 1 : index - 3
 
      puts "prev_int #{prev_int}"
      prev_station_id = @stations_keys_sorted[prev_int.to_i/2]
@@ -45,7 +40,7 @@ class PrevChannel
      File.open(filename, 'w') {|f| f.write(prev_station_id) }
 
      begin
-       @player.playlist = Radiodan::Playlist.new(tracks: @player.playlist.tracks, volume: @player.playlist.volume, position: prev_int)
+       @player.play(prev_int)
      rescue Exception=>e
        puts "barf"
        puts e

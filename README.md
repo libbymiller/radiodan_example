@@ -15,7 +15,7 @@ It has three buttons and a rotary encoder.
 The channel buttons are in pins 0 and 6 - the one in 0 cycles forwards through the stations, 6 goes backwards
 The avoider button is in pin 3.
 
-The rotary encoder is in pins 4 and 5 and controls volume (it's a bit crashy).
+The rotary encoder is in pins 4 and 5 and controls volume.
 
 * Fritzing diagram is in [doc/](/doc/)
 * Picture of the box: http://www.flickr.com/photos/nicecupoftea/10841160834/

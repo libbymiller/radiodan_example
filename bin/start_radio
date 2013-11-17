@@ -12,6 +12,7 @@ require 'lower_volume'
 require 'higher_volume'
 require 'mqtt_panic'
 
+
 root = File.join(File.dirname(__FILE__), '..')
 
 @bbc_stations = DownloadBBCRadio.new
@@ -23,15 +24,12 @@ start_station = 0
 vol = 100
 
 f = File.read("volume")
-puts f
 if(f.to_i <= 100 && f.to_i > 0)
   vol = f.to_i
   puts "got user volume #{vol}"
 end
 
 s = File.read("station")
-puts s
-pp keys_sorted
 
 if(s)
   s = s.chomp.to_s
@@ -41,17 +39,17 @@ if(s)
   end
 end
 
-tracks = nil
+tracks = []
 
 keys_sorted.each do |key|
   file = "ident_#{key}.wav"
-  ident = Radiodan::Playlist.new tracks: file
+  ident = Radiodan::Track.new file: file
+  tracks.push(ident)
   if(tracks)
-    tracks = tracks + ident.tracks + @bbc_stations.stations[key].tracks
-  else
-    tracks = ident.tracks + @bbc_stations.stations[key].tracks
+    tracks.push(Radiodan::Track.new file: @bbc_stations.stations[key])
   end
 end
+
 
 radio_start = Radiodan::Playlist.new(tracks: tracks, volume: vol, position: start_station)
 
@@ -67,6 +65,8 @@ radio = Radiodan.new do |builder|
 
   builder.playlist radio_start
 end
+
+puts "STARTING"
 
 radio.start
 
