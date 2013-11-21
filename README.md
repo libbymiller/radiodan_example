@@ -10,17 +10,15 @@ This is the start of a candidate application for releasing with v1 of the radiod
 To run it:
 - sudo cp -r idents/* /music
 
-- ./bin/start_radio
-- sudo ./bin/start_frankenpins 
-- ./bin/start_mqqt
+foreman start
 
+they should be run in tandom with frankenpins_example and mqqt_example
 
-It has three buttons and a rotary encoder.
+It has two rotary encoders and a button.
 
-The channel buttons are in pins 0 and 6 - the one in 0 cycles forwards through the stations, 6 goes backwards
 The avoider button is in pin 3.
-
-The rotary encoder is in pins 4 and 5 and controls volume.
+the channel  rotary encoder is in pins 0 and 6.
+The volume rotary encoder is in pins 4 and 5 and controls volume.
 
 * Fritzing diagram is in [doc/](/doc/)
 * Picture of the box: http://www.flickr.com/photos/nicecupoftea/10841160834/
