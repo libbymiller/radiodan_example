@@ -1,14 +1,19 @@
 radiodan_example
 ================
 
+## Birdsong is from http://www.freesfx.co.uk
+
 ## Candidate radio app
 
 This is the start of a candidate application for releasing with v1 of the radiodan gem.
 
 To run it:
+- sudo cp -r idents/* /music
+
 - ./bin/start_radio
 - sudo ./bin/start_frankenpins 
 - ./bin/start_mqqt
+
 
 It has three buttons and a rotary encoder.
 
@@ -21,3 +26,4 @@ The rotary encoder is in pins 4 and 5 and controls volume.
 * Picture of the box: http://www.flickr.com/photos/nicecupoftea/10841160834/
 
 <img src="doc/Radiodan_app.png" alt="Fritzing diagram app" />
+

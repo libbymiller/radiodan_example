@@ -61,7 +61,7 @@ radio = Radiodan.new do |builder|
   builder.use      :higher_volume, :volume => vol, :path => File.join(root, 'volume')
   builder.use      :next_channel, :stations => @bbc_stations.stations, :titles => @bbc_stations.titles, :stations_keys_sorted => keys_sorted, :start_station => start_station, :path => File.join(root, 'station')
   builder.use      :prev_channel, :stations => @bbc_stations.stations, :titles => @bbc_stations.titles, :stations_keys_sorted => keys_sorted, :start_station => start_station, :path => File.join(root, 'station')
-  builder.use      :mqtt_panic, :path => File.join(root, 'mqtt_data')
+  builder.use      :mqtt_panic, :path => File.join(root, '../mqtt_example/mqtt_data')
 
   builder.playlist radio_start
 end

@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/libbymiller/radiodan.git
-  revision: 802c5962962395515771cedad25966622004daf8
-  branch: master
+  revision: 6ff6be55fe7160f4e8e888d25e6f3097cc3f8f7c
+  branch: pull_request_feature_branch
   specs:
     radiodan (0.0.4)
       active_support (~> 3.0.0)

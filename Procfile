@@ -1,1 +1,1 @@
-app: bundle exec ./bin/start --port $PORT
+app: bundle exec ./bin/start_radio --port $PORT

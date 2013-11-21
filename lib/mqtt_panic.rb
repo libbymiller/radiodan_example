@@ -19,12 +19,14 @@ class MqttPanic
 
 
   def mqtt_panic!
+        playlist = @player.adapter.playlist
+        index = @player.adapter.playlist.position
+
+        tracks = @player.adapter.playlist.tracks
 
 # first we need to know what was originally playing
-        playlist = @player.playlist
-        position = @player.playlist.position
-        tracks = playlist.tracks[position + 1] #(plus 1 because of the idents I think?)
-        stream_url = tracks.file
+
+        stream_url = tracks[index].file
         arr = stream_url.split("_") #not ideal but...
         puts "station id is #{arr[2]}"
 
@@ -32,6 +34,9 @@ class MqttPanic
         station_id = arr[2]
         if(station_id == "5sportxtra")
           station_id = "5livesportsextra"
+        end
+        if(station_id == "asiannet")
+          station_id = "asiannetwork"
         end
 
 # get everything from /music that isn't an ident
@@ -46,12 +51,9 @@ class MqttPanic
 
         files = files.sample(20) # a random bunch
 
-        all_tracks = nil
+        all_tracks = []
         files.each do |f|
-          if(!all_tracks)
-            all_tracks = (Radiodan::Playlist.new( tracks: f)).tracks
-          end
-          all_tracks = all_tracks + (Radiodan::Playlist.new( tracks: f)).tracks
+            all_tracks.push(Radiodan::Track.new file: f)
         end
 
 
@@ -59,7 +61,7 @@ class MqttPanic
         #mp3 = Radiodan::Playlist.new tracks: file
         #all_tracks = mp3.tracks + mp31.tracks + mp32.tracks + mp33.tracks
         begin
-          @player.playlist = Radiodan::Playlist.new(tracks: all_tracks, volume: @player.playlist.volume)
+          @player.playlist = Radiodan::Playlist.new(tracks: all_tracks, volume: @player.playlist.volume, random: true, repeat: true)
         rescue Exception=>e
           puts "barf"
           puts e
@@ -71,9 +73,7 @@ class MqttPanic
            file = station_id
            filename = File.join(@path, file)
            if(File.exists?(filename))
-puts "!!!!!!!! #{filename} ok"
            else
-puts "!!!!!!!! #{filename} NOT ok"
               File.open(filename, 'w') {|f| f.write(Time.now) }
            end
            f = File.new(filename)
@@ -85,7 +85,8 @@ puts "!!!!!!!! #{filename} NOT ok"
                 logger.debug "file has changed #{f.ctime}***\n\n"   
                 timer.cancel
                 logger.debug "Timer cancelled\n\n"   
-                @player.playlist = Radiodan::Playlist.new(tracks: playlist.tracks, volume: @player.playlist.volume, position: position)
+                @player.playlist = Radiodan::Playlist.new(tracks: tracks, volume: @player.playlist.volume, position: index-1 )
+#                  @player.playlist = playlist
               end
            end
         end

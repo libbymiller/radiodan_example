@@ -4,7 +4,7 @@ group :development do
   gem 'pry'
 end
 
-gem 'radiodan', :git => 'https://github.com/libbymiller/radiodan.git', :branch => :master
+gem 'radiodan', :git => 'https://github.com/libbymiller/radiodan.git', :branch => :pull_request_feature_branch
 
 group :web do
   gem 'thin'
