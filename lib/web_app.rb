@@ -29,14 +29,14 @@ class WebApp < Radiodan::Sinatra
     "Prev!"
   end
 
-  get '/lower_volume' do
+  get '/lower_volume/:diff' do
     player.trigger_event :lower_volume
-    "Lowering Volume!"
+    "Lowering Volume! #{params[:diff]}"
   end
 
-  get '/higher_volume' do
+  get '/higher_volume/:diff' do
     player.trigger_event :higher_volume
-    "Increasing Volume!"
+    "Increasing Volume!  #{params[:diff]}"
   end
 
   get '/panic' do
