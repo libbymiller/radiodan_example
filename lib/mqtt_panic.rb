@@ -40,6 +40,9 @@ class MqttPanic
         if(station_id == "asiannet")
           station_id = "asiannetwork"
         end
+        if(station_id == "ws")
+          station_id = "worldserviceradio"
+        end
 
 
         if(station_id)
