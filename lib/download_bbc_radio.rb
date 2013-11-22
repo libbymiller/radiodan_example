@@ -14,8 +14,8 @@ require "rest-client"
 
 class DownloadBBCRadio
   URL = "http://www.bbc.co.uk/radio/listen/live/r%s_aaclca.pls"
-  STATIONS = %w{1 1x 2 3 4 4lw 4x 5l 5lsp 6}
-  METADATA = ["Radio one", "Radio One Extra", "Radio Two", "Radio Three", "Radio Four F M ", "Radio Four Long Wave", "Radio Four Extra", "Radio Five Live", "Radio Five Live Sports Extra", "Radio Six Music"]
+  STATIONS = %w{1 1x 2 3 4 4lw 4x 5l 5lsp 6 an}
+  METADATA = ["Radio one", "Radio One Extra", "Radio Two", "Radio Three", "Radio Four F M ", "Radio Four Long Wave", "Radio Four Extra", "Radio Five Live", "Radio Five Live Sports Extra", "Radio Six Music", "Asian Network"]
   attr_accessor :stations, :titles
 
 
@@ -53,6 +53,10 @@ class DownloadBBCRadio
     end
 
     @threads.collect(&:join)
+
+# world service is different
+    @stations["bbc_radio_ws"] = "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-eieuk"
+
     @stations
   end
 end

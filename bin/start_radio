@@ -2,6 +2,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'radiodan'
+require 'fileutils'
 
 $: << './lib'
 require 'download_bbc_radio'
@@ -15,6 +16,18 @@ require 'mqtt_panic'
 
 root = File.join(File.dirname(__FILE__), '..')
 
+# copy idents and birdsong to the /music dir for mpd
+src_dir = Dir.new("#{root}/idents/").entries
+
+dst = "/music/"
+src_dir.each do |src|
+  puts "src is #{src}"
+  if(src!="." && src!="..")
+    FileUtils.cp("#{root}/idents/#{src}", "#{dst}#{src}")
+  end
+end
+
+# download stations
 @bbc_stations = DownloadBBCRadio.new
 @bbc_stations.run
 
@@ -72,7 +85,7 @@ radio = Radiodan.new do |builder|
   builder.use      :higher_volume, :volume => vol, :path => File.join(root, 'volume')
   builder.use      :next_channel, :stations => @bbc_stations.stations, :titles => @bbc_stations.titles, :stations_keys_sorted => keys_sorted, :start_station => start_station, :path => File.join(root, 'station')
   builder.use      :prev_channel, :stations => @bbc_stations.stations, :titles => @bbc_stations.titles, :stations_keys_sorted => keys_sorted, :start_station => start_station, :path => File.join(root, 'station')
-  builder.use      :mqtt_panic, :path => File.join(root, '../mqtt_example/mqtt_data')
+  builder.use      :mqtt_panic, :path => File.join(root, '../mqtt_example/mqtt_data'), :music_dir => "/music", :root => root
 
   builder.playlist radio_start
 end
