@@ -21,22 +21,33 @@ root = File.join(File.dirname(__FILE__), '..')
 keys_sorted = @bbc_stations.stations.keys.sort
 
 start_station = 0
-vol = 100
+vol = 40
 
-f = File.read("volume")
-if(f.to_i <= 100 && f.to_i > 0)
-  vol = f.to_i
-  puts "got user volume #{vol}"
+begin
+  f = File.read("volume")
+
+  if(f && f.to_i <= 100 && f.to_i > 0)
+    vol = f.to_i
+    puts "got user volume #{vol}"
+  end
+rescue
+ puts "no file for volume"
 end
 
-s = File.read("station")
+puts "volume is #{vol}"
 
-if(s)
-  s = s.chomp.to_s
-  if(keys_sorted.include?(s))
-    start_station = (keys_sorted.index(s)*2)
-    puts "got user start station #{start_station}"
+begin
+  s = File.read("station")
+
+  if(s)
+    s = s.chomp.to_s
+    if(keys_sorted.include?(s))
+      start_station = (keys_sorted.index(s)*2)
+      puts "got user start station #{start_station}"
+    end
   end
+rescue
+ puts "no file for station"
 end
 
 tracks = []
