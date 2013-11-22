@@ -6,7 +6,9 @@ class MqttPanic
   include Radiodan::Logging
 
   def initialize(config)
+    @root = config[:root]
     @path = config[:path]
+    @music_dir = config[:music_dir]
   end
 
   def call(player)
@@ -39,57 +41,73 @@ class MqttPanic
           station_id = "asiannetwork"
         end
 
+
+        if(station_id)
+
+# this hsould probably happen elsewhere so that we can return to the place we were at
 # get everything from /music that isn't an ident
-# shouldn't be hardcoded
-        files = []
+          files = []
 
-        Dir.foreach("/music") {|x| 
-          if(!x.match("ident") && x!="." && x!="..")
-            files.push(x)
-          end
-        }
+          Dir.foreach(@music_dir) {|x| 
+            if(!x.match("ident") && x!="." && x!="..")
+              files.push(x)
+            end
+          }
 
-        files = files.sample(20) # a random bunch
+          files = files.sample(20) # a random bunch
 
-        all_tracks = []
-        files.each do |f|
+          all_tracks = []
+          files.each do |f|
             all_tracks.push(Radiodan::Track.new file: f)
-        end
+          end
 
-
-        #file = "totd_20130924-0600a.mp3"
-        #mp3 = Radiodan::Playlist.new tracks: file
-        #all_tracks = mp3.tracks + mp31.tracks + mp32.tracks + mp33.tracks
-        begin
-          @player.playlist = Radiodan::Playlist.new(tracks: all_tracks, volume: @player.playlist.volume, random: true, repeat: true)
-        rescue Exception=>e
-          puts "barf"
-          puts e
-        end
+          begin
+            @player.playlist = Radiodan::Playlist.new(tracks: all_tracks, volume: @player.playlist.volume, random: true, repeat: true)
+          rescue Exception=>e
+            puts "barf"
+            puts e
+          end
 # now we need to monitor the correct file
 
-        file_change_time = nil
-         timer = EM::Synchrony.add_periodic_timer(1) do
-           file = station_id
-           filename = File.join(@path, file)
-           if(File.exists?(filename))
-           else
-              File.open(filename, 'w') {|f| f.write(Time.now) }
-           end
-           f = File.new(filename)
-           logger.debug "file change time is #{f.ctime}"
-           if(!file_change_time)
-              file_change_time = f.ctime
-           else
-              if(file_change_time < f.ctime)
-                logger.debug "file has changed #{f.ctime}***\n\n"   
-                timer.cancel
-                logger.debug "Timer cancelled\n\n"   
-                @player.playlist = Radiodan::Playlist.new(tracks: tracks, volume: @player.playlist.volume, position: index-1 )
-#                  @player.playlist = playlist
-              end
+
+          monitor_file(station_id, @player, tracks, index)
+        else
+          # we are already avoiding. skip to next track,but continue to monitor the file
+           begin
+             @player.next
+#             filename = File.join(@root, "station")
+#             recovered_station_id = File.read(filename)
+#             monitor_file(recovered_station_id, @player, tracks, index)
+           rescue   
+             puts "can't find recovered station id"
            end
         end
   end
 end
 
+
+def monitor_file(station_id, player, tracks, index)
+
+          file_change_time = nil
+          timer = EM::Synchrony.add_periodic_timer(1) do
+
+             file = station_id
+             filename = File.join(@path, file)
+             if(File.exists?(filename))
+             else
+                File.open(filename, 'w') {|f| f.write(Time.now) }
+             end
+             f = File.new(filename)
+             logger.debug "file change time is #{f.ctime}"
+             if(!file_change_time)
+                file_change_time = f.ctime
+             else
+                if(file_change_time < f.ctime)
+                  logger.debug "file has changed #{f.ctime}***\n\n"   
+                  timer.cancel
+                  logger.debug "Timer cancelled\n\n"   
+                  player.playlist = Radiodan::Playlist.new(tracks: tracks, volume: player.playlist.volume, position: index-1 )
+                end
+             end
+          end
+end
